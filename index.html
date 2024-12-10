@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tribo de Reflexo Guiado</title>
+<style>
+  body, html {
+    margin: 0; 
+    padding: 0;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    background: #fff;
+    color: #333;
+  }
+
+  /* Paleta de cores (para nível avançado):
+     Azul (#4285F4), Verde (#34A853), Amarelo (#FBBC05), Vermelho (#EA4335) */
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  header, footer {
+    padding: 10px;
+    text-align: center;
+    background: #F1F1F1;
+  }
+
+  header {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
+  footer {
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    padding: 20px;
+  }
+
+  .screen-1, .screen-2 {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .active {
+    display: flex !important;
+  }
+
+  .selection-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .selection-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .difficulty-options, .time-options {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .difficulty-option, .time-option {
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #eee;
+    text-align: center;
+    flex: 1 1 30%;
+    user-select: none;
+    font-size: 0.9em;
+    transition: background 0.3s;
+  }
+
+  .difficulty-option.selected, .time-option.selected {
+    background: #4285F4; 
+    color: #fff;
+  }
+
+  .speed-group {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+  }
+
+  .speed-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .speed-input {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .button-group {
+    margin-top: 20px;
+  }
+
+  .start-button {
+    background: #34A853;
+    color: #fff;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+
+  .start-button:hover {
+    background: #2c8c46;
+  }
+
+  /* Tela 2 */
+  .arrow-container {
+    position: relative;
+    width: 80vw;
+    max-width: 400px;
+    height: 80vw;
+    max-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .arrow {
+    position: relative;
+    width: 200px;
+    height: 60px;
+    border-radius: 30px;
+    transition: transform 0.5s ease, color 0.5s ease, opacity 0.5s ease;
+    opacity: 1;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  /* Ponta da seta (apenas para non-advanced), originalmente adicionada via pseudo-elemento.
+     Agora não vamos mais usar pseudo-elemento, pois utilizaremos imagens. Assim, removemos o :after */
+
+  /* Direções no modo avançado (rotaciona o retângulo) */
+  .arrow.up.advanced {
+    transform: rotate(-90deg);
+    background-color: #4285F4;
+  }
+  .arrow.down.advanced {
+    transform: rotate(90deg);
+    background-color: #EA4335;
+  }
+  .arrow.left.advanced {
+    transform: rotate(180deg);
+    background-color: #FBBC05;
+  }
+  .arrow.right.advanced {
+    transform: rotate(0deg);
+    background-color: #34A853;
+  }
+
+  /* Non-advanced (iniciante e intermediário): 
+     Apenas imagens estáticas, sem rotação. 
+     Cada direção tem sua imagem: */
+  .arrow.non-advanced {
+    background-color: transparent; /* sem cor, só a imagem */
+  }
+
+  /* Mesma lógica para o hint (a seta menor no canto) */
+  .top-left-hint {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 40px;
+    height: 20px;
+    opacity: 0.8;
+    transition: transform 0.5s ease, color 0.5s ease, opacity 0.5s ease;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 60px;
+  }
+
+  /* Advanced para hint (apenas um retângulo) */
+  .top-left-hint.advanced {
+    background-color: #ccc;
+  }
+
+  /* Non-advanced para hint: também imagem da seta, menor */
+  .top-left-hint.non-advanced {
+    background-color: transparent; /* sem cor, só imagem */
+  }
+
+  .main-arrow{
+    min-height: 150px;
+  }
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>Tribo de Reflexo Guiado</header>
+    <main>
+      <!-- Tela 1: Configurações -->
+      <div class="screen-1 active">
+        <div class="selection-group">
+          <label>Nível de Dificuldade:</label>
+          <div class="difficulty-options">
+            <div class="difficulty-option" data-level="iniciante">Iniciante</div>
+            <div class="difficulty-option" data-level="médio">Médio</div>
+            <div class="difficulty-option" data-level="avançado">Avançado</div>
+          </div>
+        </div>
+
+        <div class="speed-group">
+          <label>Velocidade da troca de setas (quanto maior o valor, mais rápido):</label>
+          <input type="range" min="1" max="10" value="5" class="speed-input" />
+        </div>
+
+        <div class="selection-group">
+          <label>Tempo de exercício:</label>
+          <div class="time-options">
+            <div class="time-option" data-time="45">45s</div>
+            <div class="time-option" data-time="60">1 min</div>
+            <div class="time-option" data-time="90">1min30s</div>
+            <div class="time-option" data-time="120">2 min</div>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="start-button">Iniciar</button>
+        </div>
+      </div>
+
+      <!-- Tela 2: Execução -->
+      <div class="screen-2">
+        <div class="arrow-container">
+          <div class="top-left-hint arrow"></div>
+          <div class="arrow main-arrow"></div>
+        </div>
+      </div>
+    </main>
+    <footer>by André Santana <span style="font-size:0.8em;">©</span> 2024</footer>
+  </div>
+
+<script>
+  const screen1 = document.querySelector('.screen-1');
+  const screen2 = document.querySelector('.screen-2');
+  const difficultyOptions = document.querySelectorAll('.difficulty-option');
+  const timeOptions = document.querySelectorAll('.time-option');
+  const startButton = document.querySelector('.start-button');
+  const speedInput = document.querySelector('.speed-input');
+
+  const arrowMain = document.querySelector('.screen-2 .arrow-container .arrow:nth-child(2)');
+  const arrowHint = document.querySelector('.screen-2 .arrow-container .top-left-hint');
+
+  let selectedDifficulty = null;
+  let selectedTime = null;
+  let speedValue = 5;
+  
+  let directions = [];
+  let intervalId = null;
+  let exerciseDuration = 0;
+  let elapsed = 0;
+  let timerInterval = null;
+
+  let currentDirection = null;
+  let upcomingDirection = null;
+  let advancedMode = false;
+
+  const DIRECTIONS = {
+    horizontal: ["left","right"],
+    vertical: ["up","down"],
+    all: ["left","right","up","down"]
+  };
+
+  // Imagens para non-advanced
+  const DIRECTION_IMAGES = {
+    up: 'arrow_up.png',
+    down: 'arrow_down.png',
+    left: 'arrow_left.png',
+    right: 'arrow_right.png'
+  };
+
+  difficultyOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      difficultyOptions.forEach(o => o.classList.remove('selected'));
+      option.classList.add('selected');
+      selectedDifficulty = option.dataset.level;
+    });
+  });
+
+  timeOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      timeOptions.forEach(o => o.classList.remove('selected'));
+      option.classList.add('selected');
+      selectedTime = parseInt(option.dataset.time,10);
+    });
+  });
+
+  speedInput.addEventListener('input', (e) => {
+    speedValue = parseInt(e.target.value,10);
+  });
+
+  startButton.addEventListener('click', () => {
+    if(!selectedDifficulty || !selectedTime) {
+      alert('Por favor, selecione o nível de dificuldade e o tempo.');
+      return;
+    }
+
+    if(selectedDifficulty === 'iniciante') {
+      directions = DIRECTIONS.horizontal; // apenas horizontal
+      advancedMode = false;
+    } else if(selectedDifficulty === 'médio') {
+      directions = DIRECTIONS.all; // todas as direções
+      advancedMode = false;
+    } else if(selectedDifficulty === 'avançado') {
+      directions = DIRECTIONS.all; // todas as direções
+      advancedMode = true;
+    }
+
+    exerciseDuration = selectedTime;
+
+    // Ajusta classes para avançado ou não
+    toggleAdvancedMode(arrowMain, advancedMode);
+    toggleAdvancedMode(arrowHint, advancedMode);
+
+    screen1.classList.remove('active');
+    screen2.classList.add('active');
+    
+    startExercise();
+  });
+
+  function startExercise() {
+    elapsed = 0;
+    currentDirection = getRandomDirection();
+    upcomingDirection = getRandomDirection();
+
+    setArrow(arrowMain, currentDirection);
+    setArrow(arrowHint, upcomingDirection);
+
+    timerInterval = setInterval(() => {
+      elapsed++;
+      if(elapsed >= exerciseDuration) {
+        endExercise();
+      }
+    }, 1000);
+
+    const intervalTime = 3000 - (speedValue - 1) * 200;
+
+    intervalId = setInterval(() => {
+      currentDirection = upcomingDirection;
+      upcomingDirection = getRandomDirection();
+
+      transitionArrow(arrowMain, currentDirection);
+      transitionArrow(arrowHint, upcomingDirection);
+    }, intervalTime);
+  }
+
+  function endExercise() {
+    clearInterval(intervalId);
+    clearInterval(timerInterval);
+    alert('Exercício finalizado!');
+    screen2.classList.remove('active');
+    screen1.classList.add('active');
+  }
+
+  function getRandomDirection() {
+    return directions[Math.floor(Math.random()*directions.length)];
+  }
+
+  function setArrow(element, direction) {
+    // Remove classes de direção
+    element.classList.remove('left','right','up','down');
+    element.classList.add(direction);
+
+    if(advancedMode) {
+      // Modo avançado: rotaciona o retângulo e muda a cor (já via CSS)
+      // Nada adicional aqui, pois já está no CSS .arrow.up.advanced etc.
+      element.style.backgroundImage = 'none';
+    } else {
+      // Non-advanced: exibe imagem, sem rotação
+      element.style.backgroundImage = `url(${DIRECTION_IMAGES[direction]})`;
+    }
+  }
+
+  function transitionArrow(element, newDirection) {
+    element.style.opacity = 0;
+    setTimeout(() => {
+      setArrow(element, newDirection);
+      element.style.opacity = 1;
+    }, 300);
+  }
+
+  function toggleAdvancedMode(element, isAdvanced) {
+    if(isAdvanced) {
+      element.classList.add('advanced');
+      element.classList.remove('non-advanced');
+    } else {
+      element.classList.remove('advanced');
+      element.classList.add('non-advanced');
+    }
+  }
+</script>
+</body>
+</html>
