@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Tribo de Reflexo Guiado</title>
+<title>Exercícios de Reflexo</title>
 <style>
   body, html {
     margin: 0; 
@@ -214,6 +214,16 @@
     display: none; /* por padrão não exibe na tela 1 */
   }
 
+  .bottom-bar-copy {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #F1F1F1;
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+  }
+
   .bottom-bar button {
     background: #4285F4;
     color: #fff;
@@ -239,7 +249,7 @@
 </head>
 <body>
   <div class="container">
-    <header>Tribo de Reflexo Guiado</header>
+    <header>Exercícios de Reflexo</header>
     <main>
       <!-- Tela 1: Configurações -->
       <div class="screen-1 active">
@@ -283,7 +293,7 @@
         </div>
       </div>
     </main>
-    <footer>by André Santana © 2024</footer>
+    <footer class="bottom-bar-copy">by André Santana © 2024</footer>
   </div>
 
   <div class="bottom-bar">
@@ -475,7 +485,7 @@
   repeatButton.addEventListener('click', () => {
     finalMessageContainer.style.display = 'none';
     startExercise();
-    repeatButton.disabled = false;
+    repeatButton.disabled = true;
   });
 
   backButton.addEventListener('click', () => {
