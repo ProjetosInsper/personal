@@ -13,9 +13,6 @@
     color: #333;
   }
 
-  /* Paleta de cores:
-     Azul (#4285F4), Verde (#34A853), Amarelo (#FBBC05), Vermelho (#EA4335) */
-
   .container {
     display: flex;
     flex-direction: column;
@@ -24,18 +21,18 @@
     box-sizing: border-box;
   }
 
-  header, footer {
+  header {
     padding: 10px;
     text-align: center;
     background: #F1F1F1;
-  }
-
-  header {
     font-size: 1.2em;
     font-weight: bold;
   }
 
   footer {
+    padding: 10px;
+    text-align: center;
+    background: #F1F1F1;
     font-size: 0.8em;
     color: #666;
   }
@@ -145,27 +142,29 @@
   .arrow-container {
     position: relative;
     width: 80vw;
-    max-width: 400px;
     height: 80vw;
+    max-width: 400px;
     max-height: 400px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-top: 50px;
-    padding: 50px;
   }
 
   .arrow {
     position: relative;
-    width: 200px;
-    height: 60px;
-    border-radius: 30px;
     transition: transform 0.5s ease, color 0.5s ease, opacity 0.5s ease;
     opacity: 1;
-    background-size: contain;
+    background-size: 40%;
     background-repeat: no-repeat;
     background-position: center;
+  }
+
+  .main-arrow {
+    width: 100%;
+    height: 100%;
+    border: 0.1rem dashed #333; 
+    border-radius: 15%;
   }
 
   .arrow.up.advanced {
@@ -186,40 +185,7 @@
   }
 
   .arrow.non-advanced {
-    background-color: transparent;
-  }
-
-  .top-left-hint {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 40px;
-    height: 20px;
-    opacity: 0.8;
-    transition: transform 0.5s ease, color 0.5s ease, opacity 0.5s ease;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    min-height: 60px;
-  }
-
-  .top-left-hint.advanced {
-    background-color: #ccc;
-  }
-
-  .top-left-hint.non-advanced {
-    background-color: transparent;
-  }
-
-  .main-arrow{
-    min-height: 120px;
-    border: 0.1rem dashed #333; 
-    border-radius: 15%;
-    padding: 100px;
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-color: #fff;
   }
 
   .final-message {
@@ -228,6 +194,12 @@
     color: #333;
     margin-top: 20px;
     text-align: center;
+  }
+
+  .final-message-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
   }
 
   .bottom-bar {
@@ -239,6 +211,7 @@
     justify-content: space-around;
     padding: 15px 0;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    display: none; /* por padrão não exibe na tela 1 */
   }
 
   .bottom-bar button {
@@ -246,21 +219,20 @@
     color: #fff;
     border: none;
     border-radius: 4px;
-    padding: 30px 30px;
+    padding: 15px 20px;
     cursor: pointer;
     font-size: 0.9em;
     font-weight: bold;
     transition: background 0.3s;
   }
 
-  .bottom-bar button:hover {
-    background: #3267c3;
+  .bottom-bar button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
   }
 
-  .final-message-container {
-    display: none;
-    flex-direction: column;
-    align-items: center;
+  .bottom-bar button:hover:enabled {
+    background: #3267c3;
   }
 
 </style>
@@ -304,7 +276,6 @@
       <!-- Tela 2: Execução -->
       <div class="screen-2">
         <div class="arrow-container">
-          
           <div class="arrow main-arrow"></div>
         </div>
         <div class="final-message-container">
@@ -312,11 +283,11 @@
         </div>
       </div>
     </main>
-    <footer>by André Santana <span style="font-size:0.8em;">©</span> 2024</footer>
+    <footer>by André Santana © 2024</footer>
   </div>
 
-  <div class="bottom-bar" style="display:none;">
-    <button class="repeat-button">Repetir exercício</button>
+  <div class="bottom-bar">
+    <button class="repeat-button" disabled>Repetir exercício</button>
     <button class="back-button">Voltar</button>
   </div>
 
@@ -330,12 +301,13 @@
   const errorMessage = document.querySelector('.error-message');
 
   const arrowMain = document.querySelector('.screen-2 .arrow-container .arrow.main-arrow');
-  //const arrowHint = document.querySelector('.screen-2 .arrow-container .top-left-hint');
 
   const finalMessageContainer = document.querySelector('.final-message-container');
   const bottomBar = document.querySelector('.bottom-bar');
   const repeatButton = document.querySelector('.repeat-button');
   const backButton = document.querySelector('.back-button');
+
+  const footer = document.querySelector('footer');
 
   let selectedDifficulty = null;
   let selectedTime = null;
@@ -364,7 +336,6 @@
     right: 'arrow_right.png'
   };
 
-  // Função para obter cor baseada na direção
   function getColorForDirection(direction) {
     switch(direction) {
       case 'up': return '#4285F4';
@@ -417,13 +388,17 @@
     exerciseDuration = selectedTime;
 
     toggleAdvancedMode(arrowMain, advancedMode);
-    //toggleAdvancedMode(arrowHint, advancedMode);
 
+    // Troca de tela
     screen1.classList.remove('active');
     screen2.classList.add('active');
 
+    // Na tela de execução, mostra a barra inferior e esconde o footer
+    bottomBar.style.display = 'flex';
+    footer.style.display = 'none';
+
     finalMessageContainer.style.display = 'none';
-    bottomBar.style.display = 'none';
+    repeatButton.disabled = true;
 
     startExercise();
   });
@@ -434,7 +409,6 @@
     upcomingDirection = getRandomDirection();
 
     setArrow(arrowMain, currentDirection);
-    //setArrow(arrowHint, upcomingDirection);
 
     timerInterval = setInterval(() => {
       elapsed++;
@@ -450,7 +424,6 @@
       upcomingDirection = getRandomDirection();
 
       transitionArrow(arrowMain, currentDirection);
-      //transitionArrow(arrowHint, upcomingDirection);
     }, intervalTime);
   }
 
@@ -458,9 +431,8 @@
     clearInterval(intervalId);
     clearInterval(timerInterval);
 
-    // Exibir mensagem de finalização abaixo da seta
     finalMessageContainer.style.display = 'flex';
-    bottomBar.style.display = 'flex';
+    repeatButton.disabled = false;
   }
 
   function getRandomDirection() {
@@ -473,14 +445,12 @@
 
     if(advancedMode) {
       element.style.backgroundImage = 'none';
+      element.style.backgroundColor = getColorForDirection(direction);
+      element.style.borderColor = getColorForDirection(direction);
     } else {
       element.style.backgroundImage = `url(${DIRECTION_IMAGES[direction]})`;
-    }
-
-    // Atualizar a cor da borda do main-arrow de acordo com a direção
-    if(element.classList.contains('main-arrow')) {
-      const color = getColorForDirection(direction);
-      element.style.borderColor = color;
+      element.style.backgroundColor = '#fff';
+      element.style.borderColor = getColorForDirection(direction);
     }
   }
 
@@ -503,16 +473,16 @@
   }
 
   repeatButton.addEventListener('click', () => {
-    // Reiniciar o exercício
     finalMessageContainer.style.display = 'none';
-    bottomBar.style.display = 'none';
     startExercise();
+    repeatButton.disabled = false;
   });
 
   backButton.addEventListener('click', () => {
-    // Voltar para a tela anterior
+    clearInterval(intervalId);
+    clearInterval(timerInterval);
+
     finalMessageContainer.style.display = 'none';
-    bottomBar.style.display = 'none';
     screen2.classList.remove('active');
     screen1.classList.add('active');
     selectedDifficulty = null;
@@ -520,6 +490,10 @@
     difficultyOptions.forEach(o => o.classList.remove('selected'));
     timeOptions.forEach(o => o.classList.remove('selected'));
     errorMessage.textContent = '';
+
+    // Ao voltar para a tela 1: mostra footer, esconde barra
+    footer.style.display = 'block';
+    bottomBar.style.display = 'none';
   });
 </script>
 </body>
