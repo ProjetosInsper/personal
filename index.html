@@ -13,7 +13,7 @@
     color: #333;
   }
 
-  /* Paleta de cores (para nível avançado):
+  /* Paleta de cores:
      Azul (#4285F4), Verde (#34A853), Amarelo (#FBBC05), Vermelho (#EA4335) */
 
   .container {
@@ -46,13 +46,14 @@
     flex-direction: column;
     overflow: auto;
     padding: 20px;
+    position: relative;
   }
 
   .screen-1, .screen-2 {
     display: none;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .active {
@@ -133,6 +134,13 @@
     background: #2c8c46;
   }
 
+  .error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 10px;
+    text-align: center;
+  }
+
   /* Tela 2 */
   .arrow-container {
     position: relative;
@@ -141,8 +149,11 @@
     height: 80vw;
     max-height: 400px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: 50px;
+    padding: 50px;
   }
 
   .arrow {
@@ -157,10 +168,6 @@
     background-position: center;
   }
 
-  /* Ponta da seta (apenas para non-advanced), originalmente adicionada via pseudo-elemento.
-     Agora não vamos mais usar pseudo-elemento, pois utilizaremos imagens. Assim, removemos o :after */
-
-  /* Direções no modo avançado (rotaciona o retângulo) */
   .arrow.up.advanced {
     transform: rotate(-90deg);
     background-color: #4285F4;
@@ -178,14 +185,10 @@
     background-color: #34A853;
   }
 
-  /* Non-advanced (iniciante e intermediário): 
-     Apenas imagens estáticas, sem rotação. 
-     Cada direção tem sua imagem: */
   .arrow.non-advanced {
-    background-color: transparent; /* sem cor, só a imagem */
+    background-color: transparent;
   }
 
-  /* Mesma lógica para o hint (a seta menor no canto) */
   .top-left-hint {
     position: absolute;
     top: 10px;
@@ -200,18 +203,64 @@
     min-height: 60px;
   }
 
-  /* Advanced para hint (apenas um retângulo) */
   .top-left-hint.advanced {
     background-color: #ccc;
   }
 
-  /* Non-advanced para hint: também imagem da seta, menor */
   .top-left-hint.non-advanced {
-    background-color: transparent; /* sem cor, só imagem */
+    background-color: transparent;
   }
 
   .main-arrow{
-    min-height: 150px;
+    min-height: 120px;
+    border: 0.1rem dashed #333; 
+    border-radius: 15%;
+    padding: 100px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .final-message {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #F1F1F1;
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  }
+
+  .bottom-bar button {
+    background: #4285F4;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 30px 30px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+
+  .bottom-bar button:hover {
+    background: #3267c3;
+  }
+
+  .final-message-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
   }
 
 </style>
@@ -249,17 +298,26 @@
         <div class="button-group">
           <button class="start-button">Iniciar</button>
         </div>
+        <p class="error-message"></p>
       </div>
 
       <!-- Tela 2: Execução -->
       <div class="screen-2">
         <div class="arrow-container">
-          <div class="top-left-hint arrow"></div>
+          
           <div class="arrow main-arrow"></div>
+        </div>
+        <div class="final-message-container">
+          <div class="final-message">Exercício finalizado!</div>
         </div>
       </div>
     </main>
     <footer>by André Santana <span style="font-size:0.8em;">©</span> 2024</footer>
+  </div>
+
+  <div class="bottom-bar" style="display:none;">
+    <button class="repeat-button">Repetir exercício</button>
+    <button class="back-button">Voltar</button>
   </div>
 
 <script>
@@ -269,9 +327,15 @@
   const timeOptions = document.querySelectorAll('.time-option');
   const startButton = document.querySelector('.start-button');
   const speedInput = document.querySelector('.speed-input');
+  const errorMessage = document.querySelector('.error-message');
 
-  const arrowMain = document.querySelector('.screen-2 .arrow-container .arrow:nth-child(2)');
-  const arrowHint = document.querySelector('.screen-2 .arrow-container .top-left-hint');
+  const arrowMain = document.querySelector('.screen-2 .arrow-container .arrow.main-arrow');
+  //const arrowHint = document.querySelector('.screen-2 .arrow-container .top-left-hint');
+
+  const finalMessageContainer = document.querySelector('.final-message-container');
+  const bottomBar = document.querySelector('.bottom-bar');
+  const repeatButton = document.querySelector('.repeat-button');
+  const backButton = document.querySelector('.back-button');
 
   let selectedDifficulty = null;
   let selectedTime = null;
@@ -293,13 +357,23 @@
     all: ["left","right","up","down"]
   };
 
-  // Imagens para non-advanced
   const DIRECTION_IMAGES = {
     up: 'arrow_up.png',
     down: 'arrow_down.png',
     left: 'arrow_left.png',
     right: 'arrow_right.png'
   };
+
+  // Função para obter cor baseada na direção
+  function getColorForDirection(direction) {
+    switch(direction) {
+      case 'up': return '#4285F4';
+      case 'down': return '#EA4335';
+      case 'left': return '#FBBC05';
+      case 'right': return '#34A853';
+    }
+    return '#333';
+  }
 
   difficultyOptions.forEach(option => {
     option.addEventListener('click', () => {
@@ -323,30 +397,34 @@
 
   startButton.addEventListener('click', () => {
     if(!selectedDifficulty || !selectedTime) {
-      alert('Por favor, selecione o nível de dificuldade e o tempo.');
+      errorMessage.textContent = 'Por favor, selecione o nível de dificuldade e o tempo.';
       return;
+    } else {
+      errorMessage.textContent = '';
     }
 
     if(selectedDifficulty === 'iniciante') {
-      directions = DIRECTIONS.horizontal; // apenas horizontal
+      directions = DIRECTIONS.horizontal; 
       advancedMode = false;
     } else if(selectedDifficulty === 'médio') {
-      directions = DIRECTIONS.all; // todas as direções
+      directions = DIRECTIONS.all; 
       advancedMode = false;
     } else if(selectedDifficulty === 'avançado') {
-      directions = DIRECTIONS.all; // todas as direções
+      directions = DIRECTIONS.all; 
       advancedMode = true;
     }
 
     exerciseDuration = selectedTime;
 
-    // Ajusta classes para avançado ou não
     toggleAdvancedMode(arrowMain, advancedMode);
-    toggleAdvancedMode(arrowHint, advancedMode);
+    //toggleAdvancedMode(arrowHint, advancedMode);
 
     screen1.classList.remove('active');
     screen2.classList.add('active');
-    
+
+    finalMessageContainer.style.display = 'none';
+    bottomBar.style.display = 'none';
+
     startExercise();
   });
 
@@ -356,7 +434,7 @@
     upcomingDirection = getRandomDirection();
 
     setArrow(arrowMain, currentDirection);
-    setArrow(arrowHint, upcomingDirection);
+    //setArrow(arrowHint, upcomingDirection);
 
     timerInterval = setInterval(() => {
       elapsed++;
@@ -372,16 +450,17 @@
       upcomingDirection = getRandomDirection();
 
       transitionArrow(arrowMain, currentDirection);
-      transitionArrow(arrowHint, upcomingDirection);
+      //transitionArrow(arrowHint, upcomingDirection);
     }, intervalTime);
   }
 
   function endExercise() {
     clearInterval(intervalId);
     clearInterval(timerInterval);
-    alert('Exercício finalizado!');
-    screen2.classList.remove('active');
-    screen1.classList.add('active');
+
+    // Exibir mensagem de finalização abaixo da seta
+    finalMessageContainer.style.display = 'flex';
+    bottomBar.style.display = 'flex';
   }
 
   function getRandomDirection() {
@@ -389,17 +468,19 @@
   }
 
   function setArrow(element, direction) {
-    // Remove classes de direção
     element.classList.remove('left','right','up','down');
     element.classList.add(direction);
 
     if(advancedMode) {
-      // Modo avançado: rotaciona o retângulo e muda a cor (já via CSS)
-      // Nada adicional aqui, pois já está no CSS .arrow.up.advanced etc.
       element.style.backgroundImage = 'none';
     } else {
-      // Non-advanced: exibe imagem, sem rotação
       element.style.backgroundImage = `url(${DIRECTION_IMAGES[direction]})`;
+    }
+
+    // Atualizar a cor da borda do main-arrow de acordo com a direção
+    if(element.classList.contains('main-arrow')) {
+      const color = getColorForDirection(direction);
+      element.style.borderColor = color;
     }
   }
 
@@ -420,6 +501,26 @@
       element.classList.add('non-advanced');
     }
   }
+
+  repeatButton.addEventListener('click', () => {
+    // Reiniciar o exercício
+    finalMessageContainer.style.display = 'none';
+    bottomBar.style.display = 'none';
+    startExercise();
+  });
+
+  backButton.addEventListener('click', () => {
+    // Voltar para a tela anterior
+    finalMessageContainer.style.display = 'none';
+    bottomBar.style.display = 'none';
+    screen2.classList.remove('active');
+    screen1.classList.add('active');
+    selectedDifficulty = null;
+    selectedTime = null;
+    difficultyOptions.forEach(o => o.classList.remove('selected'));
+    timeOptions.forEach(o => o.classList.remove('selected'));
+    errorMessage.textContent = '';
+  });
 </script>
 </body>
 </html>
