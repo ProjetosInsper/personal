@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetivo de Aprendizagem</title>
+    <!-- Estilo base da página -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section {
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #444;
+            margin-top: 0;
+        }
+
+        h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #eaeaea;
+            font-weight: bold;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        /* Destaque para o código */
+        pre {
+            background: #1e1e1e;
+            padding: 1rem;
+            overflow: auto;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        pre code {
+            font-family: Consolas, monospace;
+            font-size: 0.9rem;
+            white-space: pre;
+            color: #dcdcdc;
+            display: block;
+        }
+
+        /* Destaque nas checklists */
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .checklist li {
+            margin: 0.5rem 0;
+            position: relative;
+            padding-left: 2rem;
+            line-height: 1.4;
+        }
+
+        .checklist li::before {
+            content: "✓";
+            color: #444;
+            position: absolute;
+            left: 0;
+            top: 0.1rem;
+            font-size: 1rem;
+        }
+
+        /* Cores diferentes para cada conceito */
+        .nivel-D {
+            background: #ffe6e6;
+            border-left: 5px solid #e60000;
+        }
+
+        .nivel-C {
+            background: #fffde6;
+            border-left: 5px solid #e6e600;
+        }
+
+        .nivel-B {
+            background: #e6f7ff;
+            border-left: 5px solid #0099cc;
+        }
+
+        .nivel-A {
+            background: #e6ffe6;
+            border-left: 5px solid #009900;
+        }
+
+        article h3 {
+            margin-top: 0;
+        }
+
+        ol li {
+            margin-bottom: 1rem;
+        }
+
+        #rubric table {
+            margin-top: 1rem;
+        }
+
+        #rubric td {
+            vertical-align: top;
+        }
+
+        #evaluation-examples article {
+            margin-bottom: 2rem;
+        }
+    </style>
+
+    <!-- Highlight.js CSS (tema padrão) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+
+    <!-- Highlight.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Inicializa o Highlight.js após carregar o DOM
+            hljs.highlightAll();
+        });
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Objetivo de Aprendizagem</h1>
+    </header>
+    <main>
+        <section id="learning-objective">
+            <h2>Objetivo de Aprendizagem</h2>
+            <p>FE1: Estruturar arquivos HTML a partir de sketches e restrições semânticas</p>
+        </section>
+        <section id="rubric">
+            <h2>Rubrica</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Não Entregue (I)</th>
+                        <th>Em Desenvolvimento (D)</th>
+                        <th>Essencial (C)</th>
+                        <th>Proficiente (B)</th>
+                        <th>Avançado (A)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nenhuma entrega.</td>
+                        <td>
+                            O conjunto de páginas não contempla integralmente os 3 casos de uso, apresenta estrutura
+                            confusa ou insuficiente. Uso excessivo de &lt;div&gt; sem função, sem hierarquia clara.
+                            Navegação interna ausente ou pouco coerente.
+                        </td>
+                        <td>
+                            Todas as páginas necessárias estão presentes, cobrindo integralmente os 3 casos de uso.
+                            Utiliza tags semânticas básicas (&lt;header&gt;, &lt;nav&gt;, &lt;section&gt;,
+                            &lt;article&gt;, &lt;footer&gt;) de forma coerente. Navegação interna funcional e elementos
+                            de interação adequados.
+                        </td>
+                        <td>
+                            Além do nível C, código segue padrões de qualidade (indentação, atributos adequados,
+                            validação
+                            W3C). Todas as páginas auxiliares também são implementadas.
+                        </td>
+                        <td>
+                            Além do nível B, páginas estruturadas de forma escalável e modular (design atômico),
+                            reutilização de componentes, uso de atributos de acessibilidade (ex.: aria-labelledby).
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section id="examples">
+            <h2>Exemplo de Uso</h2>
+            <h3>Casos de Uso</h3>
+            <ol>
+                <li><strong>Caso 1:</strong> Ana, aluna do Insper, precisa reservar uma sala para reunião da equipe.
+                    Acessa o calendário, seleciona dia 14 de maio, 14:00 - 16:00.</li>
+                <li><strong>Caso 2:</strong> Ana vê salas disponíveis, escolhe Sala 203, confirma reserva. Em seguida,
+                    edita reserva para a Sala 301 (maior capacidade) e confirma a alteração.</li>
+                <li><strong>Caso 3:</strong> Ana reporta uma ocorrência (TV da Sala 301 quebrada) via área de suporte,
+                    descreve o problema, anexa foto e envia relatório para manutenção.</li>
+            </ol>
+        </section>
+        <section id="evaluation-examples">
+            <h2>Exemplos de Avaliação</h2>
+            <article class="nivel-D">
+                <h3>Nível I (Não Entregue)</h3>
+                <p>Sem código, pois não houve entrega.</p>
+            </article>
+            <article class="nivel-D">
+                <h3>Nível D (Em Desenvolvimento)</h3>
+                <p>Características:</p>
+                <ul>
+                    <li>Cobertura incompleta dos casos de uso.</li>
+                    <li>Semântica deficiente, uso excessivo de &lt;div&gt; genéricos.</li>
+                    <li>Ausência de navegação interna coerente.</li>
+                    <li>Fluxos não claramente conectados.</li>
+                </ul>
+                <pre><code class="language-html">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplicativo de Reservas</title>
+</head>
+<body>
+    <div>
+        <h1>Aplicativo de Reservas</h1>
+        <a href="calendario.html">Calendário</a>
+        <a href="reservar.html">Reservar</a>
+        <a href="suporte.html">Suporte</a>
+    </div>
+</body>
+</html>
+                </code></pre>
+            </article>
+            <article class="nivel-C">
+                <h3>Nível C (Essencial)</h3>
+                <p>Características:</p>
+                <ul>
+                    <li>Todas as páginas necessárias estão presentes.</li>
+                    <li>Utilização coerente de tags semânticas básicas.</li>
+                    <li>Navegação interna funcional e elementos de interação adequados.</li>
+                </ul>
+                <pre><code class="language-html">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplicativo de Reservas - Nível C</title>
+</head>
+<body>
+    <header>
+        <h1>Aplicativo de Reservas</h1>
+        <nav>
+            <ul>
+                <li><a href="calendario.html">Calendário</a></li>
+                <li><a href="suporte.html">Suporte</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Casos de Uso</h2>
+            <p>Selecionar a opção desejada no menu para iniciar o fluxo.</p>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Insper</p>
+    </footer>
+</body>
+</html>
+                </code></pre>
+            </article>
+            <article class="nivel-B">
+                <h3>Nível B (Proficiente)</h3>
+                <p>Características:</p>
+                <ul>
+                    <li>Código segue padrões de qualidade (indentação, atributos adequados, validação W3C).</li>
+                    <li>Todas as páginas auxiliares implementadas.</li>
+                </ul>
+                <pre><code class="language-html">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplicativo de Reservas - Nível B</title>
+</head>
+<body>
+    <header>
+        <h1>Aplicativo de Reservas</h1>
+        <nav>
+            <ul>
+                <li><a href="calendario.html">Calendário</a></li>
+                <li><a href="suporte.html">Suporte</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Salas Disponíveis</h2>
+            <form>
+                <label><input type="radio" name="sala" required> Sala 203</label><br>
+                <label><input type="radio" name="sala" required> Sala 301</label><br>
+                <button>Confirmar Reserva</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Insper</p>
+    </footer>
+</body>
+</html>
+                </code></pre>
+            </article>
+            <article class="nivel-A">
+                <h3>Nível A (Avançado)</h3>
+                <p>Características:</p>
+                <ul>
+                    <li>Organização do código em componentes reutilizáveis (design atômico).</li>
+                    <li>Uso de atributos de acessibilidade, como aria-labelledby.</li>
+                    <li>Estrutura escalável e modular, fácil de manter.</li>
+                </ul>
+                <pre><code class="language-html">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplicativo de Reservas - Nível A</title>
+</head>
+<body>
+    <header>
+        <h1 id="pageTitle">Aplicativo de Reservas</h1>
+        <nav aria-labelledby="pageTitle">
+            <ul>
+                <li><a href="calendario.html">Calendário</a></li>
+                <li><a href="suporte.html">Suporte</a></li>
+                <li><a href="componentes.html">Componentes</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- Página organizada em "átomos", "moléculas" e "organismos" -->
+        <section aria-labelledby="salasTitle">
+            <h2 id="salasTitle">Salas Disponíveis</h2>
+            <!-- Molécula: Lista de salas -->
+            <div class="lista-salas">
+                <!-- Átomo: Campo de opção de sala -->
+                <label>
+                    <input type="radio" name="sala" value="203" required> Sala 203
+                </label><br>
+                <label>
+                    <input type="radio" name="sala" value="301" required> Sala 301
+                </label><br>
+            </div>
+            <!-- Molécula: Botão de ação -->
+            <div class="acao-reserva">
+                <button>Confirmar Reserva</button>
+            </div>
+        </section>
+        <section aria-labelledby="suporteTitle">
+            <h2 id="suporteTitle">Suporte</h2>
+            <!-- Molécula: Formulário de reportar problema -->
+            <form action="enviar-relato.html" method="post">
+                <label for="descProblema">Descreva o problema:</label><br>
+                <textarea id="descProblema" name="descricao" rows="4" cols="50" required></textarea><br>
+                <label for="fotoProblema">Anexar foto:</label>
+                <input type="file" id="fotoProblema" name="foto" accept="image/*"><br>
+                <button type="submit">Enviar Relato</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Insper</p>
+    </footer>
+</body>
+</html>
+                </code></pre>
+            </article>
+        </section>
+        <section id="checklist">
+            <h2>Checklist para Avaliação</h2>
+
+            <article class="nivel-D">
+                <h3>Conceito D (Em Desenvolvimento)</h3>
+                <ul class="checklist">
+                    <li>Implementar arquivos HTML básicos para o caso de uso 1.</li>
+                    <li>Incluir elementos principais, ainda sem semântica ideal.</li>
+                    <li>Links mínimos entre páginas, sem navegação detalhada.</li>
+                </ul>
+            </article>
+
+            <article class="nivel-C">
+                <h3>Conceito C (Essencial)</h3>
+                <ul class="checklist">
+                    <li>Criar todas as páginas necessárias para os 3 casos de uso.</li>
+                    <li>Utilizar tags semânticas básicas (&lt;header&gt;, &lt;nav&gt;, &lt;footer&gt;).</li>
+                    <li>Garantir fluxos de navegação funcionais entre as páginas.</li>
+                </ul>
+            </article>
+
+            <article class="nivel-B">
+                <h3>Conceito B (Proficiente)</h3>
+                <ul class="checklist">
+                    <li>Refinar o código seguindo padrões de qualidade (indentação, atributos adequados).</li>
+                    <li>Adicionar atributos como alt em imagens e required em campos obrigatórios.</li>
+                    <li>Validar o código HTML com as ferramentas W3C.</li>
+                </ul>
+            </article>
+
+            <article class="nivel-A">
+                <h3>Conceito A (Avançado)</h3>
+                <ul class="checklist">
+                    <li>Organizar o código de forma escalável e modular (design atômico).</li>
+                    <li>Utilizar atributos de acessibilidade como aria-labelledby.</li>
+                    <li>Implementar práticas avançadas de design atômico.</li>
+                </ul>
+            </article>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Objetivo de Aprendizagem</p>
+    </footer>
+</body>
+
+</html>
